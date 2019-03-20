@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: web_db
+    environment:
+      MYSQL_ROOT_PASSWORD: pwroot
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    volumes:
+      - ./db:/var/lib/mysql
+    ports:
+      - "4567:3306"
+  php:
+    image: php-apache
+    container_name: web_php
+    volumes:
+      - ./php:/var/www/html
+    ports:
+      - "7777:80"
+    stdin_open: true
+    tty: true
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: web_db
+    restart: always
+    depends_on:
+      - db
